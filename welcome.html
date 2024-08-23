@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dart 🎯 Exam</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #e0f7fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+        header {
+            background-color: #00aaff;
+            color: #fff;
+            padding: 25px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-sidebar {
+            background-color: #fff;
+            color: #00796b;
+            border: 1px solid #00796b;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            margin-right:40px;
+        }
+        .toggle-sidebar:hover {
+            background-color: #00796b;
+            color: #fff;
+        }
+        .header-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 100px;
+            flex-wrap: wrap;
+        }
+        .header-buttons .button {
+            background-color:#00aaff ;
+            color: #fff;
+            border: 1px solid #4a148c;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+        .header-buttons .button:hover {
+q            background-color: #6a1b9a;
+            border-color: #6a1b9a;
+        }
+        .container {
+            display: flex;
+            margin-top: 80px;
+            flex-wrap: wrap;
+        }
+        .sidebar {
+            width: 220px;
+            background: #004d40;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 60px;
+            transition: transform 0.3s ease;
+            transform: translateX(-100%);
+            overflow-y: auto;
+            z-index: 999;
+        }
+        .sidebar.show {
+            transform: translateX(0);
+        }
+        .sidebar a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 15px;
+            border-bottom: 1px solid #00796b;
+            transition: background 0.3s ease;
+        }
+        .sidebar a:hover {
+            background: #00796b;
+        }
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            flex-grow: 1;
+        }
+        .button {
+            background-color: #00aaff;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #6a1b9a;
+        }
+        .additional-buttons {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .additional-buttons .button {
+            background-color: #1e88e5;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        .additional-buttons .button:hover {
+            background-color: #1565c0;
+        }
+        .image-container {
+            margin: 20px 0;
+        }
+        .image-container img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            margin: 10px 0;
+        }
+        .description {
+            margin: 20px 0;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                transform: translateY(-100%);
+                top: 60px;
+            }
+            .sidebar.show {
+                transform: translateY(0);
+            }
+            .container {
+                flex-direction: column;
+                margin-top: 0;
+            }
+            .content {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <button class="toggle-sidebar">☰</button>
+        <h2>Dart🎯 Exam Service</h2>
+    </header>
+    <div class="container">
+        <nav class="sidebar">
+            <a href="About.html">About</a>
+            <a href="comment.html">Comment</a>
+            <a href="with.html">With Us</a>
+           
+        </nav>
+        <main class="content">
+  <div class="header-buttons">
+                <a href="signup.html" class="button">Sign In</a>
+                <a href="login.html" class="button">Login</a>
+                
+            </div>
+            <section class="description">
+                <h2>Welcome to Dart 🎯 Exam</h2>
+                
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer nec odio. Praesent libero. Sed cursus ante dapibus diam. Sed nisi. Proin ac arcu nec purus ullamcorper vehicula.</p>
+                          
+                <div class="additional-buttons">
+                    <a href="learn-more.html" class="button">Learn More</a>
+
+                    <a href="download-app.html" class="button">Download App</a>
+
+                </div>
+                <p>We offer a range of online exams to help you prepare for various certifications. Our platform is user-friendly and designed to provide a seamless experience for all users.</p>
+            </section>
+            <section class="image-container">
+                <img src="https://via.placeholder.com/1200x600?text=Online+Exam+Interface" alt="Online Exam Interface">
+                <img src="https://via.placeholder.com/1200x600?text=Study+Resources" alt="Study Resources">
+            </section>
+        </main>
+    </div>
+    <script>
+        // Toggle sidebar visibility
+        const sidebar = document.querySelector('.sidebar');
+        const toggleSidebarButton = document.querySelector('.toggle-sidebar');
+
+        toggleSidebarButton.addEventListener('click', () => {
+            sidebar.classList.toggle('show');
+        });
+    </script>
+</body>
+</html>

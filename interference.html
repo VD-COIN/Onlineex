@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #007BFF;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input[type="text"], button {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #progress {
+            font-size: 16px;
+            color: #007BFF;
+            margin: 20px 0;
+        }
+        #exam-container {
+            display: none;
+        }
+        #exam-container h2 {
+            margin-top: 0;
+        }
+        .question-box {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .question-box label {
+            display: block;
+            margin: 5px 0;
+        }
+        .question-box input[type="radio"] {
+            margin-right: 10px;
+        }
+        #timer {
+            font-size: 24px;
+            color: #d9534f;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .modal-content button {
+            margin-top: 10px;
+        }
+           .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            border: 2px solid #00838f;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #b2ebf2;
+        }
+
+        .back-button img {
+            width: 20px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+    <div class="back-button" onclick="goBack()">
+        <img src="https://img.icons8.com/ios-filled/50/000000/left.png" alt="Back">
+    </div>
+        <h1>Start Exam</h1>
+        
+        <label for="school-id">School ID:</label>
+        <input type="text" id="school-id" placeholder="Enter School ID">
+        
+        <label for="student-id">Student ID:</label>
+        <input type="text" id="student-id" placeholder="Enter Student ID">
+        
+        <label for="subject-id">Subject ID:</label>
+        <input type="text" id="subject-id" placeholder="Enter Subject ID">
+        
+        <button id="start-exam">Start Exam</button>
+        
+        <div id="progress">Progress: 0%</div>
+        
+        <div id="exam-container">
+            <h2>Exam Details</h2>
+            <div id="exam-info">
+                <p id="subject-name"></p>
+                <p id="question-amount"></p>
+            </div>
+            <div id="timer"></div>
+            <button id="continue">Continue</button>
+        </div>
+        
+        <div id="exam-questions">
+            <h2>Exam Questions</h2>
+            <div id="questions-container"></div>
+            <button id="finish">Finish</button>
+        </div>
+    </div>
+
+    <!-- Modal for Finish Confirmation -->
+    <div id="finish-modal" class="modal">
+        <div class="modal-content">
+            <h2>Finish</h2>
+            <p>Are you sure you want to finish the exam?</p>
+            <button id="confirm-finish">Yes, Finish</button>
+            <button id="cancel-finish">Cancel</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8sGSHAWIkG7Jq7DPXg7II1dgFCXZ4_TU",
+            authDomain: "train-e7f95.firebaseapp.com",
+            databaseURL: "https://shool-70ffb-default-rtdb.firebaseio.com/",
+            projectId: "train-e7f95",
+            storageBucket: "train-e7f95.appspot.com",
+            messagingSenderId: "1052862647968",
+            appId: "1:1052862647968:web:0d67b008281f1919ca43c5",
+            measurementId: "G-925WN7STJZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.getElementById('start-exam').addEventListener('click', () => {
+            const schoolId = document.getElementById('school-id').value;
+            const studentId = document.getElementById('student-id').value;
+            const subjectId = document.getElementById('subject-id').value;
+            const progressElement = document.getElementById('progress');
+            const examContainer = document.getElementById('exam-container');
+            const examInfo = document.getElementById('exam-info');
+            const questionsContainer = document.getElementById('questions-container');
+            const examQuestions = document.getElementById('exam-questions');
+            const finishButton = document.getElementById('finish');
+            const finishModal = document.getElementById('finish-modal');
+            const confirmFinish = document.getElementById('confirm-finish');
+            const cancelFinish = document.getElementById('cancel-finish');
+            
+            if (schoolId && studentId && subjectId) {
+                progressElement.textContent = 'Progress: 0%';
+                let uploadProgress = 0;
+
+                // Find exam data in Firebase
+                const examRef = ref(database, `schools/${schoolId}/exams/${subjectId}`);
+                get(examRef).then(snapshot => {
+                    if (snapshot.exists()) {
+                        const data = snapshot.val();
+                        const subjectName = data.subjectName;
+                        const questions = data.questions;
+
+                        // Show progress update
+                        uploadProgress = 50;
+                        progressElement.textContent = `Progress: ${uploadProgress}%`;
+                        
+                        // Display exam info
+                        document.getElementById('subject-name').textContent = `Subject: ${subjectName}`;
+                        document.getElementById('question-amount').textContent = `Number of Questions: ${questions.length}`;
+                        
+                        // Show exam container and hide start button
+                        examContainer.style.display = 'block';
+                        document.getElementById('start-exam').style.display = 'none';
+
+                        document.getElementById('continue').addEventListener('click', () => {
+                            // Hide exam info and show questions
+                            examContainer.style.display = 'none';
+                            examQuestions.style.display = 'block';
+                            
+                            // Create question elements
+                            questions.forEach((question, index) => {
+                                const questionBox = document.createElement('div');
+                                questionBox.classList.add('question-box');
+                                questionBox.innerHTML = `
+                                    <label>${question.questionNumber}. ${question.question}</label>
+                                    <input type="radio" name="q${index}" value="A"> ${question.options.A}<br>
+                                    <input type="radio" name="q${index}" value="B"> ${question.options.B}<br>
+                                    <input type="radio" name="q${index}" value="C"> ${question.options.C}<br>
+                                    <input type="radio" name="q${index}" value="D"> ${question.options.D}
+                                `;
+                                questionsContainer.appendChild(questionBox);
+                            });
+                            
+                            // Start countdown timer
+                            let time = questions.length * 60; // Countdown in seconds
+                            const timerElement = document.getElementById('timer');
+                            timerElement.textContent = `Time Left: ${String(Math.floor(time / 60)).padStart(2, '0')}:${String(time % 60).padStart(2, '0')}`;
+
+                            const interval = setInterval(() => {
+                                const minutes = Math.floor(time / 60);
+                                const seconds = time % 60;
+                                timerElement.textContent = `Time Left: ${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                                time--;
+                                
+                                if (time < 0) {
+                                    clearInterval(interval);
+                                    finishButton.click(); // Trigger the Finish button automatically when the countdown ends
+                                }
+                            }, 1000);
+                        });
+
+                        // Handle Finish button click
+                        let finishClicked = false;
+
+                        finishButton.addEventListener('click', () => {
+                            if (!finishClicked) {
+                                finishClicked = true;
+                                finishModal.style.display = 'flex'; // Show the finish modal
+
+                                confirmFinish.addEventListener('click', () => {
+                                    finishModal.style.display = 'none';
+
+                                    // Collect student answers
+                                    const studentAnswers = {};
+                                    questions.forEach((_, index) => {
+                                        const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
+                                        studentAnswers[index] = selectedOption ? selectedOption.value : null;
+                                    });
+
+                                    // Calculate score (for demonstration, assume each correct answer is worth 1 point)
+                                    let score = 0;
+                                    questions.forEach((question, index) => {
+                                        if (studentAnswers[index] === question.answer) {
+                                            score++;
+                                        }
+                                    });
+
+                                    // Save score to Firebase
+                                    const resultRef = ref(database, `schools/${schoolId}/results/${subjectId}/${studentId}`);
+                                    set(resultRef, { score }).then(() => {
+                                        alert(`Your score is ${score}`);
+                                        setTimeout(() => {
+                                            window.location.href = 'bye.html'; // Redirect to bye.html after 20 seconds
+                                        }, 20000); // 20 seconds delay
+                                    }).catch(error => {
+                                        console.error('Error saving score:', error);
+                                        alert('Failed to save score.');
+                                    });
+                                });
+
+                                cancelFinish.addEventListener('click', () => {
+                                    finishModal.style.display = 'none';
+                                });
+                            }
+                        });
+
+                    } else {
+                        progressElement.textContent = 'Progress: 0%';
+                        progressElement.style.color = 'red';
+                        alert('Exam data not found.');
+                    }
+                }).catch(error => {
+                    console.error('Error fetching exam data:', error);
+                    progressElement.textContent = 'Progress: 0%';
+                    progressElement.style.color = 'red';
+                    alert('Failed to fetch exam data.');
+                });
+            } else {
+                alert('Please fill in all fields.');
+            }
+        });
+        function goBack() {
+            window.location.href = 'hometeacher.html';
+        }
+    </script>
+</body>
+</html>

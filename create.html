@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Registration</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #e0f7fa, #ffffff);
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            background: url('https://www.example.com/decorative-image.png') no-repeat center center;
+            background-size: cover;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        .container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1e90ff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 1;
+        }
+        .input-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #1e90ff;
+            font-weight: bold;
+        }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 2px solid #87cefa;
+            border-radius: 8px;
+            font-size: 16px;
+            background: #f9f9f9;
+        }
+        .input-group textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .input-group input:focus, .input-group textarea:focus {
+            border-color: #1e90ff;
+            outline: none;
+        }
+        .button {
+            padding: 15px 25px;
+            border: none;
+            background-color: #1e90ff;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+        .button:hover {
+            background-color: #4682b4;
+            transform: scale(1.05);
+        }
+        .button:disabled {
+            background-color: #b0e0e6;
+            cursor: not-allowed;
+        }
+        .display-box {
+            margin-bottom: 15px;
+            padding: 15px;
+            background: #e0f7fa;
+            border: 2px solid #87cefa;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 18px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            padding: 25px;
+            border: 2px solid #87cefa;
+            border-radius: 10px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        .modal.active {
+            display: block;
+        }
+        .modal button {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: #1e90ff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .modal button:hover {
+            background-color: #4682b4;
+        }
+        .decorative-border {
+            border: 2px solid #87cefa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #f0f8ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>School Registration</h1>
+
+        <div class="decorative-border">
+            <div class="input-group">
+                <label for="schoolName">School Name</label>
+                <input type="text" id="schoolName" required>
+            </div>
+            <div class="input-group">
+                <label for="schoolAddress">School Address</label>
+                <input type="text" id="schoolAddress" required>
+            </div>
+            <div class="input-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="input-group">
+                <label for="description">Description</label>
+                <textarea id="description" required></textarea>
+            </div>
+            <div class="input-group">
+                <label for="estimatedStudents">Estimated Students Amount</label>
+                <input type="number" id="estimatedStudents" required>
+            </div>
+            <div class="input-group">
+                <label for="years">For How Many Years</label>
+                <input type="number" id="years" required>
+            </div>
+
+            <div class="checkbox-group">
+               
+               <li> <label><input type="checkbox" id="normalRegistration"> Normal Registration</label></li>
+               <li> <label><input type="checkbox" id="onlineRegistration"> Online Registration</label></li>
+               <li> <label><input type="checkbox" id="onlineExam"> Online Exam</label> </li>
+               <li> <label><input type="checkbox" id="onlineResultViewer"> Online Result Viewer</label></li>
+            </div>
+
+            <div class="display-box">
+                <div>Calculated Money: <span id="moneyDisplay">0</span></div>
+            </div>
+            <div class="display-box">
+                <div>Generated ID: <span id="idDisplay">N/A</span></div>
+            </div>
+
+            <button class="button" id="showMoneyButton">Show Money</button>
+            <button class="button" id="createSaveButton">Create and Save</button>
+            <button class="button" id="goButton" style="display: none;" onclick="window.location.href='paymentschool.html'">Proceed to Payment</button>
+
+            <!-- Modal -->
+            <div id="successModal" class="modal">
+                <div>Success!</div>
+                <button class="button" onclick="closeModal('successModal')">Close</button>
+            </div>
+            <div id="errorModal" class="modal">
+                <div>Error!</div>
+                <button class="button" onclick="closeModal('errorModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8sGSHAWIkG7Jq7DPXg7II1dgFCXZ4_TU",
+            authDomain: "train-e7f95.firebaseapp.com",
+            databaseURL: "https://shool-70ffb-default-rtdb.firebaseio.com/",
+            projectId: "train-e7f95",
+            storageBucket: "train-e7f95.appspot.com",
+            messagingSenderId: "1052862647968",
+            appId: "1:1052862647968:web:0d67b008281f1919ca43c5",
+            measurementId: "G-925WN7STJZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.getElementById('showMoneyButton').addEventListener('click', () => {
+            const estimatedStudents = parseInt(document.getElementById('estimatedStudents').value) || 0;
+            const normalRegistration = document.getElementById('normalRegistration').checked;
+            const onlineRegistration = document.getElementById('onlineRegistration').checked;
+            const onlineExam = document.getElementById('onlineExam').checked;
+            const onlineResultViewer = document.getElementById('onlineResultViewer').checked;
+
+            let money = estimatedStudents * 5;
+            if (normalRegistration) money += 500;
+            if (onlineRegistration) money += 5000;
+          if (onlineExam) money += 20000;
+            if (onlineResultViewer) money += 3000;
+
+            document.getElementById('moneyDisplay').innerText = money + 'ETB';
+
+            // Enable the "Create and Save" button if the calculated money is greater than 0
+            document.getElementById('createSaveButton').disabled = money <= 0;
+        });
+
+        document.getElementById('createSaveButton').addEventListener('click', () => {
+            const schoolName = document.getElementById('schoolName').value;
+            const schoolAddress = document.getElementById('schoolAddress').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            const email = document.getElementById('email').value;
+            const description = document.getElementById('description').value;
+            const estimatedStudents = parseInt(document.getElementById('estimatedStudents').value) || 0;
+            const years = parseInt(document.getElementById('years').value) || 0;
+
+            if (schoolName && schoolAddress && phoneNumber && email && description && estimatedStudents > 0 && years > 0) {
+                // Generate a random ID
+                const generatedId = 'J' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0');
+                document.getElementById('idDisplay').innerText = generatedId;
+
+                // Save data to Firebase
+                const schoolRef = ref(database, 'schoolrequests/' + generatedId);
+                set(schoolRef, {
+                    name: schoolName,
+                    address: schoolAddress,
+                    phone: phoneNumber,
+                    email: email,
+                    description: description,
+                    estimatedStudents: estimatedStudents,
+                    years: years,
+                    services: {
+                        normalRegistration: document.getElementById('normalRegistration').checked,
+                        onlineRegistration: document.getElementById('onlineRegistration').checked,
+                        onlineExam: document.getElementById('onlineExam').checked,
+                        onlineResultViewer: document.getElementById('onlineResultViewer').checked
+                    }
+                })
+                .then(() => {
+                    document.getElementById('goButton').style.display = 'inline-block';
+                    showModal('successModal');
+                })
+                .catch((error) => {
+                    console.error('Error writing to database:', error);
+                    showModal('errorModal');
+                });
+            } else {
+                showModal('errorModal');
+            }
+        });
+
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+    </script>
+</body>
+</html>

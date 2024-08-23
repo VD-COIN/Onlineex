@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Results Viewer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        .container {
+            width: 80%;
+            margin: 2rem auto;
+            padding: 1rem;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: .5rem;
+            font-weight: bold;
+        }
+        .form-group input {
+            width: 100%;
+            padding: .5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            display: inline-block;
+            padding: .5rem 1rem;
+            margin: .5rem 0;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: .75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .download-btn {
+            background-color: #28a745;
+            margin: 1rem 0;
+        }
+        .download-btn:hover {
+            background-color: #218838;
+        }
+             .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            background-color: #fff;
+            border: 2px solid #00838f;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .back-button:hover {
+            background-color: #b2ebf2;
+        }
+
+        .back-button img {
+            width: 20px;
+            height: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+     <div class="back-button" onclick="goBack()">
+        <img src="https://img.icons8.com/ios-filled/50/000000/left.png" alt="Back">
+    </div>
+        <h1>School Results Viewer</h1>
+        <div class="form-group">
+            <label for="schoolId">School ID</label>
+            <input type="text" id="schoolId" placeholder="Enter School ID">
+        </div>
+        <div class="form-group">
+            <label for="subjectId">Subject ID</label>
+            <input type="text" id="subjectId" placeholder="Enter Subject ID">
+        </div>
+        <button class="btn" id="findBtn">Find</button>
+        <button class="btn download-btn" id="downloadBtn">Download</button>
+        <table id="resultsTable">
+            <thead>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Result</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Results will be inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+        import * as XLSX from "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8sGSHAWIkG7Jq7DPXg7II1dgFCXZ4_TU",
+            authDomain: "train-e7f95.firebaseapp.com",
+            databaseURL: "https://shool-70ffb-default-rtdb.firebaseio.com/",
+            projectId: "train-e7f95",
+            storageBucket: "train-e7f95.appspot.com",
+            messagingSenderId: "1052862647968",
+            appId: "1:1052862647968:web:0d67b008281f1919ca43c5",
+            measurementId: "G-925WN7STJZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.getElementById('findBtn').addEventListener('click', async () => {
+            const schoolId = document.getElementById('schoolId').value.trim();
+            const subjectId = document.getElementById('subjectId').value.trim();
+            if (schoolId === '' || subjectId === '') {
+                alert('Please enter both School ID and Subject ID.');
+                return;
+            }
+
+            const resultsTableBody = document.getElementById('resultsTable').getElementsByTagName('tbody')[0];
+            resultsTableBody.innerHTML = ''; // Clear previous results
+
+            try {
+                const schoolRef = ref(database, `schools/${schoolId}/results/${subjectId}`);
+                const snapshot = await get(schoolRef);
+                if (snapshot.exists()) {
+                    const results = snapshot.val();
+                    for (const [studentId, result] of Object.entries(results)) {
+                        const row = resultsTableBody.insertRow();
+                        const cell1 = row.insertCell(0);
+                        const cell2 = row.insertCell(1);
+                        cell1.textContent = studentId;
+                        cell2.textContent = JSON.stringify(result); // Ensure to handle nested objects properly
+                    }
+                } else {
+                    alert('No data found for the given School ID and Subject ID.');
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                alert('Failed to retrieve data.');
+            }
+        });
+
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.table_to_sheet(document.getElementById('resultsTable'));
+            XLSX.utils.book_append_sheet(wb, ws, 'Results');
+            XLSX.writeFile(wb, 'results.xlsx');
+        });
+        function goBack() {
+            window.location.href = 'hometeacher.html';
+        }
+    </script>
+</body>
+</html>

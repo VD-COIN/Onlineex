@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In</title>
+    <style>
+       body {
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(circle at top right, #ff6f61, #d2a9e1, #4a90e2, #50b3a2);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 32px;
+            font-weight: 600;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+        }
+        .form-group input[type="text"], 
+        .form-group input[type="email"], 
+        .form-group input[type="tel"], 
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+        .form-group button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 500;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            z-index: 1;
+        }
+        .form-group button:hover {
+            background-color: #357abd;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        .profile-photo-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .profile-photo {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #4a90e2;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            cursor: pointer;
+        }
+        .profile-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-photo::after {
+            content: 'Click to select a photo';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4a90e2;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: center;
+            pointer-events: none;
+        }
+        .profile-photo input[type="file"] {
+            display: none;
+        }
+        .message {
+            color: #4a90e2;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 16px;
+            background: #f9f9f9;
+        }
+    </style>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8sGSHAWIkG7Jq7DPXg7II1dgFCXZ4_TU",
+            authDomain: "train-e7f95.firebaseapp.com",
+            databaseURL: "https://shool-70ffb-default-rtdb.firebaseio.com/",
+            projectId: "train-e7f95",
+            storageBucket: "train-e7f95.appspot.com",
+            messagingSenderId: "1052862647968",
+            appId: "1:1052862647968:web:0d67b008281f1919ca43c5",
+            measurementId: "G-925WN7STJZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+        const storage = getStorage(app);
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const profilePhotoInput = document.getElementById('profilePhoto');
+            const profilePhotoPreview = document.getElementById('profilePhotoPreview');
+            const profilePhotoWrapper = document.querySelector('.profile-photo');
+            const form = document.getElementById('signInForm');
+
+            profilePhotoWrapper.addEventListener('click', function() {
+                profilePhotoInput.click();
+            });
+
+            profilePhotoInput.addEventListener('change', async function() {
+                const file = profilePhotoInput.files[0];
+                if (file) {
+                    const storagePath = 'profile_photos/' + file.name;
+                    const photoRef = storageRef(storage, storagePath);
+                    try {
+                        // Upload the file to Firebase Storage
+                        await uploadBytes(photoRef, file);
+                        // Get the download URL
+                        const downloadURL = await getDownloadURL(photoRef);
+                        profilePhotoPreview.src = downloadURL;
+                        localStorage.setItem('profilePhoto', downloadURL);
+                    } catch (error) {
+                        console.error("Upload failed:", error);
+                    }
+                }
+            });
+
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const profilePhotoURL = localStorage.getItem('profilePhoto');
+                const username = document.getElementById('username').value;
+                const phoneNumber = document.getElementById('phoneNumber').value;
+                const email = document.getElementById('email').value;
+                const address = document.getElementById('address').value;
+                const password = document.getElementById('password').value;
+                const userType = document.getElementById('userType').value;
+
+                // Save data to Firebase Realtime Database
+                const newUserRef = ref(database, 'Newusersexam/' + phoneNumber);
+                await set(newUserRef, {
+                    username,
+                    email,
+                    address,
+                    password,
+                    userType,
+                    profilePhotoURL
+                });
+
+                // Save data to LocalStorage
+                localStorage.setItem('username', username);
+                localStorage.setItem('phoneNumber', phoneNumber);
+                localStorage.setItem('email', email);
+                localStorage.setItem('address', address);
+                localStorage.setItem('password', password);
+                localStorage.setItem('userType', userType);
+
+                document.getElementById('message').textContent = 'Registration successful!';
+                setTimeout(() => {
+                    window.location.href = 'welcome.html';
+                }, 2000);
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h2>Sign In</h2>
+        <form id="signInForm">
+            <div class="profile-photo-wrapper">
+                <div class="profile-photo">
+                    <img id="profilePhotoPreview" src="" alt="Profile Photo Preview">
+                    <input type="file" id="profilePhoto" accept="image/*">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label for="phoneNumber">Phone Number</label>
+                <input type="tel" id="phoneNumber" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required>
+            </div>
+            <div class="form-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label for="userType">I am a</label>
+                <select id="userType" required>
+                    <option value="school">School</option>
+                    <option value="student">Student</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <button type="submit">Sign In</button>
+            </div>
+            <div class="message" id="message"></div>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #00bcd4, #009688);
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        .button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Complete Your Payment</h1>
+        <p>Click the button below to proceed with payment:</p>
+        <p>Pay the amount you see in the creating process:</p>
+        <a href="https://your-payment-link.com" class="button" target="_blank" id="payNowButton">PAY NOW</a>
+        <a href="Getsavedschool.html" class="button">I HAVE PAID</a>
+            <a href="Finish.html" class="button ">I CAN'T PAY KNOW </a>
+            
+       
+    </div>
+    <script>
+        document.getElementById('payNowButton').addEventListener('click', function() {
+            // Additional JavaScript functionality can be added here if needed
+            console.log('Pay Now button clicked!');
+        });
+    </script>
+</body>
+</html>

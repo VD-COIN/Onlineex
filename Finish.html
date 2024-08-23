@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #00c6ff, #0072ff);
+            color: #fff;
+            text-align: center;
+            padding: 50px;
+            margin: 0;
+        }
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            animation: bounce 2s infinite;
+        }
+        p {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        .links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .links a {
+            color: #fff;
+            background: #333;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: background 0.3s, transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        .links a:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-30px);
+            }
+            60% {
+                transform: translateY(-15px);
+            }
+        }
+        footer {
+            margin-top: 50px;
+            font-size: 1.2em;
+            color: #fff;
+        }
+        footer a {
+            color: #00ffcc;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>OK, YOU CAN BACK ANOTHER TIME!!!!</h1>
+        <p>THANK YOU FOR VISITING!!!</p>
+        <div class="links">
+            <a href="https://www.youtube.com" target="_blank">Go to our YouTube channel</a>
+            <a href="https://t.me" target="_blank">Go to our Telegram channel</a>
+            <a href="https://www.instagram.com" target="_blank">Go to our Instagram channel</a>
+        </div>
+    </div>
+    <footer>
+        Follow us on
+        <a href="https://www.youtube.com" target="_blank">YouTube</a> | 
+        <a href="https://t.me" target="_blank">Telegram</a> | 
+        <a href="https://www.instagram.com" target="_blank">Instagram</a>
+    </footer>
+</body>
+</html>

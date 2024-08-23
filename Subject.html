@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Upload</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #007BFF;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], button {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="number"] {
+            width: calc(50% - 22px);
+        }
+        button {
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #subject-container {
+            margin-top: 20px;
+        }
+        .subject-box {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        .question-box {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .question-box input[type="text"] {
+            width: calc(100% - 22px);
+        }
+        .progress {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #007BFF;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Upload Subjects</h1>
+        
+        <label for="school-id">School ID:</label>
+        <input type="text" id="school-id" placeholder="Enter School ID">
+        
+        <label for="subject-count">Number of Subjects:</label>
+        <input type="number" id="subject-count" min="1">
+        
+        <button id="generate-form">Generate Form</button>
+
+        <div id="subject-container"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyC8sGSHAWIkG7Jq7DPXg7II1dgFCXZ4_TU",
+            authDomain: "train-e7f95.firebaseapp.com",
+            databaseURL: "https://shool-70ffb-default-rtdb.firebaseio.com/",
+            projectId: "train-e7f95",
+            storageBucket: "train-e7f95.appspot.com",
+            messagingSenderId: "1052862647968",
+            appId: "1:1052862647968:web:0d67b008281f1919ca43c5",
+            measurementId: "G-925WN7STJZ"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        document.getElementById('generate-form').addEventListener('click', () => {
+            const schoolId = document.getElementById('school-id').value;
+            const subjectCount = parseInt(document.getElementById('subject-count').value);
+            const container = document.getElementById('subject-container');
+            container.innerHTML = '';
+
+            if (!schoolId) {
+                alert('Please enter the School ID.');
+                return;
+            }
+
+            for (let i = 0; i < subjectCount; i++) {
+                const box = document.createElement('div');
+                box.classList.add('subject-box');
+                box.innerHTML = `
+                    <label for="subject-name-${i}">Subject Name:</label>
+                    <input type="text" id="subject-name-${i}" placeholder="Subject Name">
+                    <label for="subject-id-${i}">Subject ID:</label>
+                    <input type="text" id="subject-id-${i}" placeholder="Subject ID">
+                    <label for="question-count-${i}">Number of Questions:</label>
+                    <input type="number" id="question-count-${i}" min="1">
+                    <div id="questions-container-${i}"></div>
+                    <button id="upload-${i}">Upload</button>
+                    <div id="progress-${i}" class="progress">Progress: 0%</div>
+                `;
+                container.appendChild(box);
+
+                document.getElementById(`question-count-${i}`).addEventListener('input', () => {
+                    const questionCount = parseInt(document.getElementById(`question-count-${i}`).value);
+                    const questionsContainer = document.getElementById(`questions-container-${i}`);
+                    questionsContainer.innerHTML = '';
+
+                    for (let j = 0; j < questionCount; j++) {
+                        const questionBox = document.createElement('div');
+                        questionBox.classList.add('question-box');
+                        questionBox.innerHTML = `
+                            <label for="question-number-${i}-${j}">Question ${j + 1} Number:</label>
+                            <input type="text" id="question-number-${i}-${j}" placeholder="Question ${j + 1} Number">
+                            <label for="question-${i}-${j}">Question ${j + 1}:</label>
+                            <input type="text" id="question-${i}-${j}" placeholder="Question ${j + 1}">
+                            <label for="option-a-${i}-${j}">Option A:</label>
+                            <input type="text" id="option-a-${i}-${j}" placeholder="Option A">
+                            <label for="option-b-${i}-${j}">Option B:</label>
+                            <input type="text" id="option-b-${i}-${j}" placeholder="Option B">
+                            <label for="option-c-${i}-${j}">Option C:</label>
+                            <input type="text" id="option-c-${i}-${j}" placeholder="Option C">
+                            <label for="option-d-${i}-${j}">Option D:</label>
+                            <input type="text" id="option-d-${i}-${j}" placeholder="Option D">
+                            <label for="answer-${i}-${j}">Answer:</label>
+                            <input type="text" id="answer-${i}-${j}" placeholder="Answer">
+                        `;
+                        questionsContainer.appendChild(questionBox);
+                    }
+                });
+
+                document.getElementById(`upload-${i}`).addEventListener('click', () => {
+                    const name = document.getElementById(`subject-name-${i}`).value;
+                    const id = document.getElementById(`subject-id-${i}`).value;
+                    const questionCount = parseInt(document.getElementById(`question-count-${i}`).value);
+                    const progressElement = document.getElementById(`progress-${i}`);
+                    
+                    if (name && id && questionCount > 0) {
+                        let uploadProgress = 0;
+                        let questions = [];
+
+                        for (let j = 0; j < questionCount; j++) {
+                            const questionNumber = document.getElementById(`question-number-${i}-${j}`).value;
+                            const questionText = document.getElementById(`question-${i}-${j}`).value;
+                            const optionA = document.getElementById(`option-a-${i}-${j}`).value;
+                            const optionB = document.getElementById(`option-b-${i}-${j}`).value;
+                            const optionC = document.getElementById(`option-c-${i}-${j}`).value;
+                            const optionD = document.getElementById(`option-d-${i}-${j}`).value;
+                            const answer = document.getElementById(`answer-${i}-${j}`).value;
+
+                            if (questionNumber && questionText && optionA && optionB && optionC && optionD && answer) {
+                                questions.push({
+                                    questionNumber,
+                                    question: questionText,
+                                    options: { A: optionA, B: optionB, C: optionC, D: optionD },
+                                    answer
+                                });
+                            }
+                        }
+
+                        const examRef = ref(database, `schools/${schoolId}/exams/${id}`);
+                        set(examRef, {
+                            subjectName: name,
+                            subjectId: id,
+                            questions
+                        }).then(() => {
+        // Update progress to 100%
+                            uploadProgress = 100;
+                            progressElement.textContent = `Progress: ${uploadProgress}%`;
+                            progressElement.style.color = 'green';
+                            alert('Data uploaded successfully!');
+     window.location.href = 'givepassword.html';                        
+                        }).catch(error => {
+                            console.error('Error uploading data:', error);
+                            progressElement.textContent = 'Progress: 0%';
+                            progressElement.style.color = 'red';
+                            alert('Failed to upload data.');
+                        });
+                    } else {
+                        alert('Please fill in all fields.');
+                    }
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>                
+                        
+                        
+                        
+                        
+                        
+                        
+                        
